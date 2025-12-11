@@ -4,7 +4,12 @@ import {
   Routes,
   Route,
   Link,
+  useNavigate,
 } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 // Simple placeholders for routes
 function Home() {
@@ -24,8 +29,44 @@ function Profile() {
   return <h2 className="title">Profile</h2>;
 }
 
+function NavAuthActions() {
+  const { token, logout } = useAuth();
+  const navigate = useNavigate();
+  if (token) {
+    return (
+      <>
+        {' | '}
+        <button
+          onClick={() => {
+            logout();
+            navigate('/login');
+          }}
+          style={{
+            background: 'transparent',
+            color: 'var(--text-secondary)',
+            border: 'none',
+            cursor: 'pointer',
+            textDecoration: 'underline',
+          }}
+          aria-label="Log out"
+        >
+          Logout
+        </button>
+      </>
+    );
+  }
+  return (
+    <>
+      {' | '}
+      <Link className="App-link" to="/login">Login</Link>
+      {' | '}
+      <Link className="App-link" to="/register">Register</Link>
+    </>
+  );
+}
+
 // PUBLIC_INTERFACE
-function App() {
+function AppShell() {
   const [theme, setTheme] = useState('light');
 
   // Effect to apply theme to document element
@@ -45,6 +86,7 @@ function App() {
           <Link className="App-link" to="/">Home</Link>{' | '}
           <Link className="App-link" to="/favorites">Favorites</Link>{' | '}
           <Link className="App-link" to="/profile">Profile</Link>
+          <NavAuthActions />
         </nav>
         <button 
           className="theme-toggle" 
@@ -57,11 +99,39 @@ function App() {
       <main role="main" className="container" style={{ padding: '2rem' }}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/favorites"
+            element={
+              <ProtectedRoute>
+                <Favorites />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </main>
     </div>
+  );
+}
+
+// PUBLIC_INTERFACE
+function App() {
+  /**
+   * Root App component with AuthProvider so that routes can access auth state.
+   */
+  return (
+    <AuthProvider>
+      <AppShell />
+    </AuthProvider>
   );
 }
 

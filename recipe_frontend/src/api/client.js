@@ -16,6 +16,11 @@ export function getApiBaseUrl() {
   return base.replace(/\/+$/, '');
 }
 
+/**
+ * Convenience wrappers for auth endpoints. These are optional helpers that use apiRequest.
+ * Keeping them here ensures a single place for endpoint paths.
+ */
+
 // PUBLIC_INTERFACE
 export async function apiRequest(path, options = {}) {
   /**
@@ -121,4 +126,26 @@ export function getAuthToken() {
    * Get current auth token from localStorage.
    */
   return localStorage.getItem('token');
+}
+
+// PUBLIC_INTERFACE
+export async function authLogin(email, password) {
+  /**
+   * Calls /auth/login with provided credentials.
+   */
+  return apiRequest('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+// PUBLIC_INTERFACE
+export async function authRegister(name, email, password) {
+  /**
+   * Calls /auth/register with provided data.
+   */
+  return apiRequest('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ name, email, password }),
+  });
 }
