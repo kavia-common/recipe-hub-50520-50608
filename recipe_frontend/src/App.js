@@ -1,6 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {
+  Routes,
+  Route,
+  Link,
+} from 'react-router-dom';
+
+// Simple placeholders for routes
+function Home() {
+  return (
+    <div>
+      <h1 className="title">Recipe Hub</h1>
+      <p className="description">Browse and search recipes.</p>
+    </div>
+  );
+}
+
+function Favorites() {
+  return <h2 className="title">Favorites</h2>;
+}
+
+function Profile() {
+  return <h2 className="title">Profile</h2>;
+}
 
 // PUBLIC_INTERFACE
 function App() {
@@ -18,7 +40,12 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
+      <header className="App-header" role="banner">
+        <nav className="navbar" aria-label="Main">
+          <Link className="App-link" to="/">Home</Link>{' | '}
+          <Link className="App-link" to="/favorites">Favorites</Link>{' | '}
+          <Link className="App-link" to="/profile">Profile</Link>
+        </nav>
         <button 
           className="theme-toggle" 
           onClick={toggleTheme}
@@ -26,22 +53,14 @@ function App() {
         >
           {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
         </button>
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          Current theme: <strong>{theme}</strong>
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
+      <main role="main" className="container" style={{ padding: '2rem' }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+      </main>
     </div>
   );
 }
